@@ -1,0 +1,626 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Fare Finder - Lucknow</title>
+  <style>
+    * {margin:0; padding:0; box-sizing:border-box; font-family:Arial,sans-serif;}
+    body {background:#ffffff; color:#333; line-height:1.5;}
+    header {background:#e1f469; color:rgb(0, 0, 0); padding:20px 70px 20px 20px; text-align:left; font-size:24px; font-weight:bold; position:relative;}
+    section {padding:30px;}
+    .calculator-container {display:flex; gap:20px; justify-content:center; align-items:flex-start; margin-top:20px; flex-wrap:wrap;}
+    .calculator, .metro-calculator {
+      background:white; padding:20px; border-radius:10px; box-shadow:0 4px 10px rgba(0,0,0,0.1);
+      width:300px; animation:fadeIn 1s ease-in-out;
+    }
+    .calculator h3, .metro-calculator h3 {margin-bottom:15px; color:#007bff; text-align:center;}
+    label {display:block; margin-top:10px; font-weight:bold;}
+    select, input {width:100%; padding:8px; margin-top:5px; border-radius:5px; border:1px solid #ccc;}
+    button {margin-top:15px; width:100%; background:#007bff; color:white; padding:10px; border:none; border-radius:5px; cursor:pointer; font-size:16px;}
+    button:hover {background:#0056b3;}
+    .result {margin-top:15px; font-weight:bold; color:green; text-align:center;}
+/* Smaller buttons for specials */
+.specials-features .map-feature-btn {
+  font-size: 12px;
+  padding: 6px;
+}
+
+    /* Map Section */
+    .map-container {margin:40px auto; text-align:center;}
+    iframe {border:none; border-radius:10px; width:90%; height:420px; box-shadow:0 4px 12px rgba(0,0,0,0.15); animation:fadeIn 1.2s ease-in-out;}
+    .search-bar {text-align:center; margin-bottom:20px;}
+    .search-bar input {width:300px; padding:8px; border:1px solid #ccc; border-radius:5px;}
+    .search-bar button {width:auto; margin-left:10px; padding:8px 15px;}
+
+    /* Features Buttons Above Map */
+    .map-features {display:grid; grid-template-columns:repeat(auto-fit,minmax(150px,1fr)); gap:10px; padding:20px; text-align:center;}
+    .map-feature-btn {
+      background:white; border:1px solid #007bff; color:#007bff; padding:10px; border-radius:5px;
+      cursor:pointer; font-weight:bold; box-shadow:0 2px 6px rgba(0,0,0,0.1); transition:0.3s;
+    }
+    .map-feature-btn:hover {background:#007bff; color:white;}
+
+    footer {background:#343a40; color:white; padding:30px; margin-top:40px;}
+    footer h3 {color:#ffc107; margin-bottom:15px;}
+    footer p {margin-bottom:8px;}
+    footer a {color:#ffc107; text-decoration:none;}
+    footer a:hover {text-decoration:underline;}
+    .features-grid {display:grid; grid-template-columns:repeat(auto-fit,minmax(120px,1fr)); gap:10px; margin-top:20px; text-align:center;}
+    .feature-item {background:white; padding:8px; border-radius:8px; color:#333; font-size:14px; box-shadow:0 4px 8px rgba(0,0,0,0.1);}
+    .feature-item img {width:24px; height:24px; margin-bottom:3px;}
+    .feature-item a {display:block; margin-top:3px; color:#007bff; font-weight:bold;}
+    .emergency-box {background:#212529; color:white; padding:15px; margin-top:30px; border-radius:10px;}
+    .emergency-box h4 {color:#ffc107; margin-bottom:10px;}
+    .emergency-box ul {list-style:none;}
+    .emergency-box li {margin-bottom:5px;}
+    .emergency-box a {color:#ffc107; text-decoration:none;}
+    .help-box {background:#007bff; color:white; padding:15px; margin-top:30px; border-radius:10px; text-align:center;}
+    .help-box h4 {margin-bottom:10px;}
+    .help-box a {color:#ffc107; text-decoration:none; font-weight:bold;}
+
+    /* Animations */
+    @keyframes fadeIn {from{opacity:0; transform:translateY(20px);} to{opacity:1; transform:translateY(0);}}
+
+    /* Google Translate container (top-right) */
+    #translateWrap {position:absolute; right:12px; top:12px; background:rgba(255,255,255,0.2); padding:6px 8px; border-radius:6px;}
+
+    /* Voice Assistant */
+    .va-btn{
+      position:fixed; right:20px; bottom:20px; width:60px; height:60px; border-radius:50%;
+      background:#007bff; color:#fff; border:none; box-shadow:0 6px 16px rgba(0,0,0,.25);
+      font-size:26px; cursor:pointer;
+    }
+    .va-panel{
+      position:fixed; right:20px; bottom:90px; width:320px; background:#fff; border-radius:10px;
+      box-shadow:0 8px 20px rgba(0,0,0,.25); display:none; overflow:hidden;
+    }
+    .va-hd{background:#f2ff00; color:#fff; padding:10px 12px; font-weight:bold; display:flex; justify-content:space-between; align-items:center;}
+    .va-bd{padding:12px; max-height:240px; overflow:auto; font-size:14px;}
+    .va-controls{display:flex; gap:8px; padding:12px; border-top:1px solid #eee;}
+    .va-controls button, .va-controls select{flex:1; padding:8px; border-radius:6px; border:1px solid #ccc; background:#f9f9f9; cursor:pointer;}
+    .hint{font-size:12px; color:#666; margin-top:8px;}
+    .pill{display:inline-block; padding:6px 10px; border:1px solid #007bff; color:#007bff; border-radius:999px; margin:4px 6px 0 0; cursor:pointer; font-size:12px;}
+    .pill:hover{background:#007bff; color:#fff;}
+  </style>
+</head>
+<body>
+<header>
+  Fare Finder - Lucknow
+  <!-- 50+ languages via Google Translate (no API key) -->
+  <div id="translateWrap">
+    <div id="google_translate_element"></div>
+  </div>
+</header>
+
+<!-- Fare Calculators -->
+<section>
+  <div class="calculator-container">
+    <div class="calculator">
+      <h3>General Fare Calculator</h3>
+      <label for="from">From:</label>
+      <input type="text" id="from" placeholder="Enter starting location">
+      <label for="to">To:</label>
+      <input type="text" id="to" placeholder="Enter destination">
+      <label for="mode">Select Mode:</label>
+      <select id="mode">
+        <option value="auto">Auto</option>
+        <option value="rickshaw">E-Rickshaw</option>
+        <option value="bus">Bus</option>
+        <option value="car">Car</option>
+      </select>
+      <button onclick="calculateFare()">Calculate Fare</button>
+      <div class="result" id="fareResult"></div>
+    </div>
+<div class="metro-calculator">
+  <h3>Metro Fare Calculator</h3>
+  <label for="metroFrom">From Station:</label>
+  <select id="metroFrom"></select>
+
+  <label for="metroTo">To Station:</label>
+  <select id="metroTo"></select>
+
+  <button onclick="calculateMetroFare()">Check Metro Fare</button>
+  <div class="result" id="metroFareResult"></div>
+</div>
+
+<script>
+  // Lucknow Metro stations (Airport → Munshi Pulia)
+  const metroStations = [
+    "CCS International Airport",
+    "Amausi",
+    "Transport Nagar",
+    "Krishna Nagar",
+    "Singar Nagar",
+    "Alambagh",
+    "Alambagh ISBT",
+    "Mawaiya",
+    "Durgapuri",
+    "Charbagh",
+    "Hussainganj",
+    "Sachivalaya",
+    "Hazratganj",
+    "KD Singh Stadium",
+    "Lucknow University",
+    "IT College",
+    "Badshahnagar",
+    "Lekhraj Market",
+    "Bhootnath Market",
+    "Indira Nagar",
+    "Munshi Pulia"
+  ];
+
+  // Populate dropdowns dynamically
+  const metroFrom = document.getElementById('metroFrom');
+  const metroTo = document.getElementById('metroTo');
+  metroStations.forEach(station => {
+    let opt1 = document.createElement('option');
+    opt1.value = station; opt1.textContent = station;
+    metroFrom.appendChild(opt1);
+
+    let opt2 = document.createElement('option');
+    opt2.value = station; opt2.textContent = station;
+    metroTo.appendChild(opt2);
+  });
+
+  // Lucknow Metro fare slabs
+  function getLucknowMetroFare(stationCount) {
+    if (stationCount <= 2) return 10;
+    if (stationCount <= 6) return 20;
+    if (stationCount <= 9) return 30;
+    if (stationCount <= 13) return 40;
+    if (stationCount <= 17) return 50;
+    return 60;
+  }
+
+  function calculateMetroFare() {
+    const from = metroFrom.value;
+    const to = metroTo.value;
+    if(from === to) {
+      document.getElementById('metroFareResult').innerText = "Select different stations.";
+      return;
+    }
+    const fromIndex = metroStations.indexOf(from);
+    const toIndex = metroStations.indexOf(to);
+    const stationCount = Math.abs(toIndex - fromIndex);
+    const fare = getLucknowMetroFare(stationCount);
+    document.getElementById('metroFareResult').innerText = `Lucknow Metro Fare: ₹${fare}`;
+  }
+</script>
+
+</section>
+
+<!-- Map Feature Buttons -->
+<section>
+  <h2 style="text-align:center; color:#f99306;">Find Nearby Services in Lucknow</h2>
+  <div class="map-features">
+    <div class="map-feature-btn" onclick="showCategory('Hospitals')">Hospitals</div>
+    <div class="map-feature-btn" onclick="showCategory('Police Stations')">Police</div>
+    <div class="map-feature-btn" onclick="showCategory('Metro Stations')">Metro</div>
+    <div class="map-feature-btn" onclick="showCategory('Railway Stations')">Railway</div>
+    <div class="map-feature-btn" onclick="showCategory('Bus Stands')">Bus</div>
+    <div class="map-feature-btn" onclick="showCategory('Hotels')">Hotels</div>
+    <div class="map-feature-btn" onclick="showCategory('Tourist Places')">Tourist Spots</div>
+    <div class="map-feature-btn" onclick="showCategory('Cinemas')">Cinemas</div>
+    <div class="map-feature-btn" onclick="showCategory('Malls')">Malls</div>
+    <div class="map-feature-btn" onclick="showCategory('Schools')">Schools</div>
+    <div class="map-feature-btn" onclick="showCategory('Colleges')">Colleges</div>
+    <div class="map-feature-btn" onclick="showCategory('Restaurants')">Restaurants</div>
+    <div class="map-feature-btn" onclick="showCategory('Petrol Pumps')">Petrol Pumps</div>
+    <div class="map-feature-btn" onclick="showCategory('ATMs')">ATMs</div>
+    <div class="map-feature-btn" onclick="showCategory('Pharmacies')">Pharmacies</div>
+    <div class="map-feature-btn" onclick="showCategory('Banks')">Banks</div>
+    <div class="map-feature-btn" onclick="showCategory('Parks')">Parks</div>
+    <div class="map-feature-btn" onclick="showCategory('Temples')">Temples</div>
+    <div class="map-feature-btn" onclick="showCategory('Mosques')">Mosques</div>
+    <div class="map-feature-btn" onclick="showCategory('Churches')">Churches</div>
+    <div class="map-feature-btn" onclick="showCategory('Museums')">Museums</div>
+    <div class="map-feature-btn" onclick="showCategory('Libraries')">Libraries</div>
+    <div class="map-feature-btn" onclick="showCategory('Community Halls')">Community Halls</div>
+    <div class="map-feature-btn" onclick="showCategory('Stadiums')">Stadiums</div>
+    <div class="map-feature-btn" onclick="showCategory('Gyms')">Gyms</div>
+  </div>
+</section>
+<!-- Famous Places & Food Shops -->
+<section>
+  <h2 style="text-align:center; color:#28a745;">Famous Places & Food Shops in Lucknow</h2>
+  <div class="map-features specials-features">
+    <div class="map-feature-btn" onclick="showSpecial('Tunday Kababi Lucknow')">Tunday Kababi</div>
+    <div class="map-feature-btn" onclick="showSpecial('Royal Cafe Hazratganj')">Royal Café</div>
+    <div class="map-feature-btn" onclick="showSpecial('Prakash Kulfi Lucknow')">Prakash Kulfi</div>
+    <div class="map-feature-btn" onclick="showSpecial('Bara Imambara Lucknow')">Bara Imambara</div>
+    <div class="map-feature-btn" onclick="showSpecial('Chota Imambara Lucknow')">Chota Imambara</div>
+    <div class="map-feature-btn" onclick="showSpecial('Rumi Darwaza Lucknow')">Rumi Darwaza</div>
+    <div class="map-feature-btn" onclick="showSpecial('Ambedkar Memorial Park Lucknow')">Ambedkar Park</div>
+    <div class="map-feature-btn" onclick="showSpecial('Hazratganj Market Lucknow')">Hazratganj Market</div>
+    <div class="map-feature-btn" onclick="showSpecial('Chowk Lucknow')">Chowk</div>
+    <div class="map-feature-btn" onclick="showSpecial('Janeshwar Mishra Park Lucknow')">Janeshwar Park</div>
+    <div class="map-feature-btn" onclick="showSpecial('Gomti Riverfront Lucknow')">Gomti Riverfront</div>
+    <div class="map-feature-btn" onclick="showSpecial('Dilkusha Kothi Lucknow')">Dilkusha Kothi</div>
+    <div class="map-feature-btn" onclick="showSpecial('British Residency Lucknow')">British Residency</div>
+    <div class="map-feature-btn" onclick="showSpecial('Satkhanda Lucknow')">Satkhanda</div>
+    <div class="map-feature-btn" onclick="showSpecial('La Martiniere College Lucknow')">La Martiniere</div>
+    <div class="map-feature-btn" onclick="showSpecial('Bada Mangal Hanuman Mandir Lucknow')">Hanuman Mandir</div>
+    <div class="map-feature-btn" onclick="showSpecial('Dargah Hazrat Abbas Lucknow')">Hazrat Abbas Dargah</div>
+    <div class="map-feature-btn" onclick="showSpecial('Jama Masjid Lucknow')">Jama Masjid</div>
+    <div class="map-feature-btn" onclick="showSpecial('Moti Mahal Lucknow')">Moti Mahal</div>
+    <div class="map-feature-btn" onclick="showSpecial('Lucknow Zoo')">Lucknow Zoo</div>
+    <div class="map-feature-btn" onclick="showSpecial('Phoenix Palassio Lucknow')">Phoenix Mall</div>
+    <div class="map-feature-btn" onclick="showSpecial('Lulu Mall Lucknow')">Lulu Mall</div>
+    <div class="map-feature-btn" onclick="showSpecial('Imambara Ghanta Ghar Lucknow')">Ghanta Ghar</div>
+    <div class="map-feature-btn" onclick="showSpecial('Begum Hazrat Mahal Park Lucknow')">Begum Hazrat Mahal Park</div>
+    <div class="map-feature-btn" onclick="showSpecial('Amrapali Water Park Lucknow')">Amrapali Water Park</div>
+    <div class="map-feature-btn" onclick="showSpecial('Chandrika Devi Temple Lucknow')">Chandrika Devi Temple</div>
+    <div class="map-feature-btn" onclick="showSpecial('Indira Gandhi Planetarium Lucknow')">Planetarium</div>
+    <div class="map-feature-btn" onclick="showSpecial('Fun Republic Mall Lucknow')">Fun Republic Mall</div>
+    <div class="map-feature-btn" onclick="showSpecial('Kaiserbagh Palace Lucknow')">Kaiserbagh Palace</div>
+    <div class="map-feature-btn" onclick="showSpecial('State Museum Lucknow')">State Museum</div>
+  </div>
+</section>
+
+<!-- Map Search Section -->
+<section class="map-container">
+  <div class="search-bar">
+    <input type="text" id="mapSearch" placeholder="Search any place in Lucknow">
+    <button onclick="searchLocation()">Search</button>
+  </div>
+  <iframe id="mapFrame" src="https://www.google.com/maps?q=Lucknow&output=embed" allowfullscreen="" loading="lazy"></iframe>
+</section>
+
+<!-- About Section -->
+<footer>
+  <h3>About Fare Finder</h3>
+  <p>Email: <a href="mailto:farefinder@gmail.com">farefinder@gmail.com</a></p>
+  <p>Quick Chat: Coming Soon!</p>
+  <p>Help & Support: 24x7 online assistance.</p>
+
+  <div class="emergency-box">
+    <h4>All Emergency Helpline Numbers</h4>
+    <ul>
+      <li><a href="tel:100">Police - 100</a></li>
+      <li><a href="tel:101">Fire - 101</a></li>
+      <li><a href="tel:108">Ambulance - 108</a></li>
+      <li><a href="tel:1090">Women Helpline - 1090</a></li>
+      <li><a href="tel:1098">Child Helpline - 1098</a></li>
+      <li><a href="tel:1070">Disaster Helpline - 1070</a></li>
+      <li><a href="tel:1073">Road Accident - 1073</a></li>
+      <li><a href="tel:1906">Gas Leakage - 1906</a></li>
+      <li><a href="tel:139">Railway Helpline - 139</a></li>
+      <li><a href="tel:1930">Cyber Crime - 1930</a></li>
+    </ul>
+  </div>
+
+  <div class="help-box">
+    <h4>Need Help?</h4>
+    <p>For any queries or assistance, contact us:</p>
+    <p><a href="mailto:farefinder@gmail.com">farefinder@gmail.com</a></p>
+    <p><a href="tel:100">Call SOS - 100</a></p>
+  </div>
+
+  <p style="margin-top:20px;">© 2025 Fare Finder - All Rights Reserved</p>
+</footer>
+
+<!-- Voice Assistant UI -->
+<button class="va-btn" id="vaToggle" title="Voice Assistant">🎤</button>
+<div class="va-panel" id="vaPanel">
+  <div class="va-hd">
+    <span>Voice Assistant</span>
+    <button style="background:transparent;border:0;color:#ec0c0c;font-size:18px;cursor:pointer;" onclick="toggleVAPanel()">✕</button>
+  </div>
+  <div class="va-bd" id="vaLog">
+    <div><b>Try:</b></div>
+    <div class="pill" onclick="vaSim('search Hazratganj')">search Hazratganj</div>
+    <div class="pill" onclick="vaSim('show hospitals')">show hospitals</div>
+    <div class="pill" onclick="vaSim('calculate fare from Charbagh to Aminabad by auto')">fare Charbagh → Aminabad auto</div>
+  </div>
+  <div class="va-controls">
+    <button id="vaStart" onclick="vaStart()">Start</button>
+    <button id="vaStop" onclick="vaStop()">Stop</button>
+    <select id="vaLang" title="Voice Language">
+      <option value="en-IN">English (India)</option>
+      <option value="hi-IN">हिन्दी (Hindi)</option>
+      <option value="ur-PK">اردو (Urdu)</option>
+      <option value="en-US">English (US)</option>
+      <option value="bn-IN">বাংলা (Bengali)</option>
+      <option value="mr-IN">Marathi</option>
+      <option value="ta-IN">Tamil</option>
+      <option value="te-IN">Telugu</option>
+      <option value="gu-IN">Gujarati</option>
+      <option value="pa-IN">Punjabi</option>
+    </select>
+  </div>
+  <div class="hint">Your browser must allow microphone access. The page can speak back responses.</div>
+</div>
+
+<script>
+  /* ====== Fare & Map functions (unchanged core) ====== */
+  function calculateFare() {
+    const from = document.getElementById('from').value.trim();
+    const to = document.getElementById('to').value.trim();
+    const mode = document.getElementById('mode').value;
+    if(!from || !to) {
+      setFare('Please enter both locations.');
+      speak('Please enter both locations.');
+      return;
+    }
+    let fare = 0;
+    switch(mode) {
+      case 'auto': fare = 50; break;
+      case 'rickshaw': fare = 30; break;
+      case 'bus': fare = 20; break;
+      case 'car': fare = 100; break;
+    }
+    const msg = `Estimated Fare: ₹${fare}`;
+    setFare(msg); speak(msg);
+  }
+  function setFare(msg){ document.getElementById('fareResult').innerText = msg; }
+
+  function calculateMetroFare() {
+    const from = document.getElementById('metroFrom').value;
+    const to = document.getElementById('metroTo').value;
+    if(from === to) {
+      document.getElementById('metroFareResult').innerText = "Select different stations.";
+      speak('Please select two different metro stations.');
+      return;
+    }
+    const stations = ["CCS Airport","Charbagh","Hazratganj","Indira Nagar","Mahanagar"];
+    const fromIndex = stations.indexOf(from);
+    const toIndex = stations.indexOf(to);
+    const distance = Math.abs(fromIndex - toIndex);
+    const fare = 10 + distance * 10;
+    const msg = `Metro Fare: ₹${fare}`;
+    document.getElementById('metroFareResult').innerText = msg;
+    speak(msg);
+  }
+
+  function searchLocation() {
+    const place = document.getElementById('mapSearch').value.trim();
+    if(!place) return;
+    document.getElementById('mapFrame').src = `https://www.google.com/maps?q=${encodeURIComponent(place + " Lucknow")}&output=embed`;
+    speak(`Showing ${place} on the map.`);
+  }
+  function showCategory(category) {
+    document.getElementById('mapFrame').src = `https://www.google.com/maps?q=${encodeURIComponent(category + " in Lucknow")}&output=embed`;
+    speak(`Showing ${category} near Lucknow.`);
+  }
+
+  /* ====== Google Translate (50+ languages) ====== */
+  function googleTranslateElementInit() {
+    new google.translate.TranslateElement({
+      pageLanguage: 'en',
+      includedLanguages: 'af,am,ar,as,ay,az,be,bg,bho,bn,bs,ca,ceb,co,cs,cy,da,de,doi,el,en,eo,es,et,eu,fa,fi,fil,fr,fy,ga,gd,gl,gn,gu,ha,haw,he,hi,hmn,hr,ht,hu,hy,id,ig,ilo,is,it,ja,jv,ka,kk,km,kn,ko,kri,ku,ky,la,lb,ln,lo,lt,lv,mai,mg,mi,mk,ml,mn,mr,ms,mt,my,ne,nl,no,ny,om,or,pa,pl,ps,pt,qu,ro,ru,rw,sa,sd,si,sk,sl,sm,sn,so,sq,sr,st,su,sv,sw,ta,te,tg,th,ti,tk,tl,tr,ts,tt,ug,uk,ur,uz,vi,xh,yi,yo,zh-CN,zh-TW,zu',
+      layout: google.translate.TranslateElement.InlineLayout.SIMPLE,
+      autoDisplay: false
+    }, 'google_translate_element');
+  }
+</script>
+<!-- Google Translate script (loads the widget) -->
+<script src="//translate.google.com/translate_a/element.js?cb=googleTranslateElementInit"></script>
+
+<script>
+  /* ====== Voice Assistant (Speech Recognition + TTS) ====== */
+  const vaBtn = document.getElementById('vaToggle');
+  const vaPanel = document.getElementById('vaPanel');
+  const vaLog = document.getElementById('vaLog');
+  const vaLangSel = document.getElementById('vaLang');
+
+  function toggleVAPanel(){
+    vaPanel.style.display = vaPanel.style.display==='block' ? 'none' : 'block';
+  }
+  vaBtn.addEventListener('click', toggleVAPanel);
+
+  // Simple logger
+  function logLine(text){ const d=document.createElement('div'); d.textContent=text; vaLog.appendChild(d); vaLog.scrollTop=vaLog.scrollHeight; }
+
+  // Text-to-Speech
+  function speak(text){
+    if(!('speechSynthesis' in window)) return;
+    const u = new SpeechSynthesisUtterance(text);
+    // Try to match selected voice language
+    const lang = vaLangSel.value || 'en-IN';
+    u.lang = lang;
+    window.speechSynthesis.speak(u);
+  }
+
+  // Speech Recognition (Chrome/Edge: webkitSpeechRecognition)
+  let recognition = null;
+  if('webkitSpeechRecognition' in window || 'SpeechRecognition' in window){
+    const SR = window.SpeechRecognition || window.webkitSpeechRecognition;
+    recognition = new SR();
+    recognition.interimResults = false;
+    recognition.continuous = false;
+    recognition.onresult = (e)=>{
+      const transcript = (e.results[0][0].transcript || '').trim();
+      logLine('🎙️ You: ' + transcript);
+      handleCommand(transcript);
+    };
+    recognition.onerror = (e)=>{ logLine('⚠️ ' + (e.error || 'mic error')); };
+    recognition.onend = ()=>{ document.getElementById('vaStart').disabled=false; };
+  }else{
+    logLine('⚠️ Voice is not supported by this browser.');
+  }
+
+  function vaStart(){
+    if(!recognition){ alert('Voice not supported in this browser.'); return; }
+    recognition.lang = vaLangSel.value || 'en-IN';
+    document.getElementById('vaStart').disabled=true;
+    recognition.start();
+    logLine('🎧 Listening… (' + recognition.lang + ')');
+  }
+  function vaStop(){ if(recognition){ recognition.stop(); logLine('⏹️ Stopped'); } }
+  function vaSim(cmd){ logLine('🎙️ You: ' + cmd); handleCommand(cmd); }
+
+  // Intent parser
+  const featureKeywords = [
+    'Hospitals','Police Stations','Metro Stations','Railway Stations','Bus Stands','Hotels',
+    'Tourist Places','Cinemas','Malls','Schools','Colleges','Restaurants','Petrol Pumps',
+    'ATMs','Pharmacies','Banks','Parks','Temples','Mosques','Churches','Museums','Libraries',
+    'Community Halls','Stadiums','Gyms'
+  ];
+
+  function handleCommand(raw){
+    const q = raw.toLowerCase();
+
+    // 1) Search map
+    if(q.startsWith('search ') || q.startsWith('find ')){
+      const place = raw.replace(/^(search|find)\s+/i,'').trim();
+      if(place){
+        document.getElementById('mapSearch').value = place;
+        searchLocation();
+        speak('Searching ' + place);
+        return;
+      }
+    }
+
+    // 2) Show category (hospitals, police, etc.)
+    for(const cat of featureKeywords){
+      const l = cat.toLowerCase();
+      if(q.includes(l.replace(' stations','')) || q.includes(l)){
+        showCategory(cat);
+        speak('Opening ' + cat);
+        return;
+      }
+    }
+    if(q.startsWith('show ')){
+      const cat = raw.replace(/^show\s+/i,'').trim();
+      showCategory(cat);
+      speak('Opening ' + cat);
+      return;
+    }
+function showSpecial(place) {
+  document.getElementById('mapFrame').src =
+    `https://www.google.com/maps?q=${encodeURIComponent(place)}&output=embed`;
+  speak(`Showing ${place} on the map.`);
+}
+
+    // 3) Calculate fare: "calculate fare from X to Y by auto"
+    if(q.includes('calculate fare') || q.startsWith('fare ')){
+      const modeMatch = q.match(/\b(auto|rickshaw|bus|car)\b/);
+      if(modeMatch){ document.getElementById('mode').value = modeMatch[1]; }
+      const m = raw.match(/from\s+(.+?)\s+to\s+(.+?)(?:\s+by\s+.+)?$/i);
+      if(m){
+        document.getElementById('from').value = m[1].trim();
+        document.getElementById('to').value = m[2].trim();
+      }
+      calculateFare();
+      return;
+    }
+
+    // 4) Metro fare: "metro fare from A to B"
+    if(q.includes('metro fare') || q.startsWith('metro ')){
+      const m = raw.match(/from\s+(.+?)\s+to\s+(.+)$/i);
+      if(m){
+        setSelectByText(document.getElementById('metroFrom'), m[1]);
+        setSelectByText(document.getElementById('metroTo'), m[2]);
+      }
+      calculateMetroFare();
+      return;
+    }
+
+    // 5) Translate language quick (say "Hindi", "Urdu")
+    if(q.includes('hindi')) setTranslateTo('hi');
+    if(q.includes('urdu')) setTranslateTo('ur');
+    if(q.includes('english')) setTranslateTo('en');
+
+    // Fallback: treat as search
+    document.getElementById('mapSearch').value = raw;
+    searchLocation();
+  }
+
+  function setSelectByText(sel, text){
+    text = (text||'').toLowerCase();
+    for(const opt of sel.options){
+      if(opt.textContent.toLowerCase().includes(text)){ sel.value = opt.textContent; return; }
+    }
+  }
+
+  // Change page language programmatically (Google widget hack)
+  function setTranslateTo(langCode){
+    const list = document.querySelector('.goog-te-combo');
+    if(list){
+      list.value = langCode;
+      list.dispatchEvent(new Event('change'));
+      speak('Language changed.');
+      logLine('🌐 Language → ' + langCode);
+    }
+  }
+</script>
+</body>
+</html>
+<script>
+  /* ====== AI Assistant (Voice + ChatGPT) ====== */
+  const vaBtn = document.getElementById('vaToggle');
+  const vaPanel = document.getElementById('vaPanel');
+  const vaLog = document.getElementById('vaLog');
+  const vaLangSel = document.getElementById('vaLang');
+
+  function toggleVAPanel(){
+    vaPanel.style.display = vaPanel.style.display==='block' ? 'none' : 'block';
+  }
+  vaBtn.addEventListener('click', toggleVAPanel);
+
+  function logLine(text, sender="🤖 AI"){
+    const d=document.createElement('div'); 
+    d.textContent= sender + ": " + text; 
+    vaLog.appendChild(d); 
+    vaLog.scrollTop=vaLog.scrollHeight; 
+  }
+
+  // Text-to-Speech
+  function speak(text){
+    if(!('speechSynthesis' in window)) return;
+    const u = new SpeechSynthesisUtterance(text);
+    u.lang = vaLangSel.value || 'en-IN';
+    window.speechSynthesis.speak(u);
+  }
+
+  // Speech Recognition
+  let recognition = null;
+  if('webkitSpeechRecognition' in window || 'SpeechRecognition' in window){
+    const SR = window.SpeechRecognition || window.webkitSpeechRecognition;
+    recognition = new SR();
+    recognition.interimResults = false;
+    recognition.continuous = false;
+    recognition.onresult = (e)=>{
+      const transcript = (e.results[0][0].transcript || '').trim();
+      logLine(transcript,"🎙️ You");
+      askAI(transcript);
+    };
+  }
+
+  function vaStart(){
+    if(!recognition){ alert('Voice not supported'); return; }
+    recognition.lang = vaLangSel.value || 'en-IN';
+    recognition.start();
+    logLine("Listening… ("+recognition.lang+")","🎧");
+  }
+  function vaStop(){ if(recognition) recognition.stop(); }
+  function vaSim(cmd){ logLine(cmd,"🎙️ You"); askAI(cmd); }
+
+  /* ====== ChatGPT Integration ====== */
+  async function askAI(query){
+    logLine("Thinking...","🤖 AI");
+    try {
+      const response = await fetch("https://api.openai.com/v1/chat/completions", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          "Authorization": "Bearer YOUR_OPENAI_API_KEY"
+        },
+        body: JSON.stringify({
+          model: "gpt-4o-mini",
+          messages: [{role:"user", content: query}]
+        })
+      });
+
+      if(!response.ok) throw new Error("API Error: "+response.status);
+
+      const data = await response.json();
+      const answer = data.choices[0].message.content;
+      logLine(answer);
+      speak(answer);
+    } catch(err){
+      logLine("⚠️ Error: "+err.message);
+    }
+  }
+</script>
