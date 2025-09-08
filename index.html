@@ -3,11 +3,11 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Fare Finder - Lucknow</title>
+  <title>Fare Finder (City Navigator)</title>
   <style>
     * {margin:0; padding:0; box-sizing:border-box; font-family:Arial,sans-serif;}
     body {background:#ffffff; color:#333; line-height:1.5;}
-    header {background:#e1f469; color:rgb(0, 0, 0); padding:20px 70px 20px 20px; text-align:left; font-size:24px; font-weight:bold; position:relative;}
+    header {background:#0091ff; color:rgb(0, 0, 0); padding:20px 70px 20px 20px; text-align:left; font-size:24px; font-weight:bold; position:relative;}
     section {padding:30px;}
     .calculator-container {display:flex; gap:20px; justify-content:center; align-items:flex-start; margin-top:20px; flex-wrap:wrap;}
     .calculator, .metro-calculator {
@@ -86,7 +86,7 @@
 </head>
 <body>
 <header>
-  Fare Finder - Lucknow
+  Fare Finder (City Navigator)
   <!-- 50+ languages via Google Translate (no API key) -->
   <div id="translateWrap">
     <div id="google_translate_element"></div>
@@ -192,7 +192,7 @@
 
 <!-- Map Feature Buttons -->
 <section>
-  <h2 style="text-align:center; color:#f99306;">Find Nearby Services in Lucknow</h2>
+  <h2 style="text-align:center; color:#000000;">Find Nearby Services in Lucknow</h2>
   <div class="map-features">
     <div class="map-feature-btn" onclick="showCategory('Hospitals')">Hospitals</div>
     <div class="map-feature-btn" onclick="showCategory('Police Stations')">Police</div>
@@ -219,42 +219,7 @@
     <div class="map-feature-btn" onclick="showCategory('Community Halls')">Community Halls</div>
     <div class="map-feature-btn" onclick="showCategory('Stadiums')">Stadiums</div>
     <div class="map-feature-btn" onclick="showCategory('Gyms')">Gyms</div>
-  </div>
-</section>
-<!-- Famous Places & Food Shops -->
-<section>
-  <h2 style="text-align:center; color:#28a745;">Famous Places & Food Shops in Lucknow</h2>
-  <div class="map-features specials-features">
-    <div class="map-feature-btn" onclick="showSpecial('Tunday Kababi Lucknow')">Tunday Kababi</div>
-    <div class="map-feature-btn" onclick="showSpecial('Royal Cafe Hazratganj')">Royal Café</div>
-    <div class="map-feature-btn" onclick="showSpecial('Prakash Kulfi Lucknow')">Prakash Kulfi</div>
-    <div class="map-feature-btn" onclick="showSpecial('Bara Imambara Lucknow')">Bara Imambara</div>
-    <div class="map-feature-btn" onclick="showSpecial('Chota Imambara Lucknow')">Chota Imambara</div>
-    <div class="map-feature-btn" onclick="showSpecial('Rumi Darwaza Lucknow')">Rumi Darwaza</div>
-    <div class="map-feature-btn" onclick="showSpecial('Ambedkar Memorial Park Lucknow')">Ambedkar Park</div>
-    <div class="map-feature-btn" onclick="showSpecial('Hazratganj Market Lucknow')">Hazratganj Market</div>
-    <div class="map-feature-btn" onclick="showSpecial('Chowk Lucknow')">Chowk</div>
-    <div class="map-feature-btn" onclick="showSpecial('Janeshwar Mishra Park Lucknow')">Janeshwar Park</div>
-    <div class="map-feature-btn" onclick="showSpecial('Gomti Riverfront Lucknow')">Gomti Riverfront</div>
-    <div class="map-feature-btn" onclick="showSpecial('Dilkusha Kothi Lucknow')">Dilkusha Kothi</div>
-    <div class="map-feature-btn" onclick="showSpecial('British Residency Lucknow')">British Residency</div>
-    <div class="map-feature-btn" onclick="showSpecial('Satkhanda Lucknow')">Satkhanda</div>
-    <div class="map-feature-btn" onclick="showSpecial('La Martiniere College Lucknow')">La Martiniere</div>
-    <div class="map-feature-btn" onclick="showSpecial('Bada Mangal Hanuman Mandir Lucknow')">Hanuman Mandir</div>
-    <div class="map-feature-btn" onclick="showSpecial('Dargah Hazrat Abbas Lucknow')">Hazrat Abbas Dargah</div>
-    <div class="map-feature-btn" onclick="showSpecial('Jama Masjid Lucknow')">Jama Masjid</div>
-    <div class="map-feature-btn" onclick="showSpecial('Moti Mahal Lucknow')">Moti Mahal</div>
-    <div class="map-feature-btn" onclick="showSpecial('Lucknow Zoo')">Lucknow Zoo</div>
-    <div class="map-feature-btn" onclick="showSpecial('Phoenix Palassio Lucknow')">Phoenix Mall</div>
-    <div class="map-feature-btn" onclick="showSpecial('Lulu Mall Lucknow')">Lulu Mall</div>
-    <div class="map-feature-btn" onclick="showSpecial('Imambara Ghanta Ghar Lucknow')">Ghanta Ghar</div>
-    <div class="map-feature-btn" onclick="showSpecial('Begum Hazrat Mahal Park Lucknow')">Begum Hazrat Mahal Park</div>
-    <div class="map-feature-btn" onclick="showSpecial('Amrapali Water Park Lucknow')">Amrapali Water Park</div>
-    <div class="map-feature-btn" onclick="showSpecial('Chandrika Devi Temple Lucknow')">Chandrika Devi Temple</div>
-    <div class="map-feature-btn" onclick="showSpecial('Indira Gandhi Planetarium Lucknow')">Planetarium</div>
-    <div class="map-feature-btn" onclick="showSpecial('Fun Republic Mall Lucknow')">Fun Republic Mall</div>
-    <div class="map-feature-btn" onclick="showSpecial('Kaiserbagh Palace Lucknow')">Kaiserbagh Palace</div>
-    <div class="map-feature-btn" onclick="showSpecial('State Museum Lucknow')">State Museum</div>
+    
   </div>
 </section>
 
